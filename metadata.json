@@ -1,0 +1,8 @@
+{
+  "name": "SupervisiEdu",
+  "description": "Aplikasi supervisi desain mobile friendly untuk memantau progres proyek secara real-time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
