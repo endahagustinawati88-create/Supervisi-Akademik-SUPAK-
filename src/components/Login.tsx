@@ -84,16 +84,6 @@ export default function Login({ onLogin, users }: LoginProps) {
             Masuk
           </button>
         </form>
-
-        <div className="mt-6 border-t pt-6">
-          <h3 className="text-sm font-semibold text-slate-700 mb-2">Info Login Default:</h3>
-          <ul className="text-xs text-slate-500 space-y-1">
-            <li><span className="font-medium text-slate-700">Admin:</span> admin / 1</li>
-            <li><span className="font-medium text-slate-700">Guru:</span> NIP / 123</li>
-            <li><span className="font-medium text-slate-700">Kepala Sekolah:</span> NIP / 12345</li>
-            <li className="pt-2 italic text-slate-400">Guru/Pengawas baru menggunakan password "123". Kepala Sekolah menggunakan password "12345".</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
