@@ -1,22 +1,28 @@
 import { useState, useMemo } from 'react';
-import { SupervisionData, User } from '../types';
+import { SupervisionData, User, InstrumentCategory } from '../types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { CheckCircle2, Clock, Users, FileText, ChevronRight } from 'lucide-react';
+import { CheckCircle2, Clock, Users, FileText, ChevronRight, Settings } from 'lucide-react';
 import { cn } from '../utils';
 import UserManagement from './UserManagement';
+import InstrumentManagement from './InstrumentManagement';
 
 interface AdminDashboardProps {
+  currentUser: User;
   supervisions: SupervisionData[];
   users: User[];
+  instruments: InstrumentCategory[];
   onNewSupervision: (teacherId?: string) => void;
+  onEditSupervision: (supervisionId: string) => void;
   onViewSupervision: (supervisionId: string) => void;
   onAddUser: (user: User) => void;
   onDeleteUser: (id: string) => void;
+  onUpdateInstruments: (instruments: InstrumentCategory[]) => void;
 }
 
-export default function AdminDashboard({ supervisions, users, onNewSupervision, onViewSupervision, onAddUser, onDeleteUser }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'supervisi' | 'pengguna'>('supervisi');
+export default function AdminDashboard({ currentUser, supervisions, users, instruments, onNewSupervision, onEditSupervision, onViewSupervision, onAddUser, onDeleteUser, onUpdateInstruments }: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState<'supervisi' | 'pengguna' | 'instrumen'>('supervisi');
   const guruUsers = useMemo(() => users.filter(u => u.role === 'guru'), [users]);
+  const isAdmin = currentUser.role === 'admin';
 
   const stats = useMemo(() => {
     const totalTeachers = guruUsers.length;
@@ -55,7 +61,7 @@ export default function AdminDashboard({ supervisions, users, onNewSupervision, 
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Dashboard Admin</h2>
+          <h2 className="text-2xl font-bold text-slate-800">Dashboard {isAdmin ? 'Admin' : 'Supervisi'}</h2>
           <p className="text-slate-500">Pantau progres supervisi dan kelola pengguna.</p>
         </div>
         <div className="flex bg-slate-100 p-1 rounded-lg">
@@ -65,17 +71,31 @@ export default function AdminDashboard({ supervisions, users, onNewSupervision, 
           >
             Supervisi
           </button>
-          <button
-            onClick={() => setActiveTab('pengguna')}
-            className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'pengguna' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
-          >
-            Pengguna
-          </button>
+          {isAdmin && (
+            <>
+              <button
+                onClick={() => setActiveTab('pengguna')}
+                className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'pengguna' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
+              >
+                Pengguna
+              </button>
+              <button
+                onClick={() => setActiveTab('instrumen')}
+                className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'instrumen' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
+              >
+                Instrumen
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {activeTab === 'pengguna' && (
+      {isAdmin && activeTab === 'pengguna' && (
         <UserManagement users={users} onAddUser={onAddUser} onDeleteUser={onDeleteUser} />
+      )}
+
+      {isAdmin && activeTab === 'instrumen' && (
+        <InstrumentManagement instruments={instruments} onUpdate={onUpdateInstruments} />
       )}
 
       {activeTab === 'supervisi' && (
@@ -160,12 +180,20 @@ export default function AdminDashboard({ supervisions, users, onNewSupervision, 
                     <p className="text-xs text-slate-500">NIP. {user.nip}</p>
                   </div>
                   {isCompleted ? (
-                    <button
-                      onClick={() => onViewSupervision(supervision.id)}
-                      className="text-xs flex items-center gap-1 text-indigo-600 font-medium hover:text-indigo-700 bg-indigo-50 px-2 py-1 rounded"
-                    >
-                      Lihat Hasil
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onEditSupervision(supervision.id)}
+                        className="text-xs flex items-center gap-1 text-amber-600 font-medium hover:text-amber-700 bg-amber-50 px-2 py-1 rounded transition-colors"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => onViewSupervision(supervision.id)}
+                        className="text-xs flex items-center gap-1 text-indigo-600 font-medium hover:text-indigo-700 bg-indigo-50 px-2 py-1 rounded transition-colors"
+                      >
+                        Lihat Hasil
+                      </button>
+                    </div>
                   ) : (
                     <button
                       onClick={() => onNewSupervision(user.id)}

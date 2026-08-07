@@ -12,6 +12,23 @@ export interface AspectEvaluation {
   comment: string;
 }
 
+export interface InstrumentSubItem {
+  id: string;
+  text: string;
+}
+
+export interface InstrumentItem {
+  id: string;
+  text: string;
+  subItems?: InstrumentSubItem[];
+}
+
+export interface InstrumentCategory {
+  id: string;
+  category: string;
+  items: InstrumentItem[];
+}
+
 export interface SupervisionData {
   id: string;
   teacherId: string;

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
-import { User, SupervisionData } from './types';
-import { DUMMY_USERS, INITIAL_SUPERVISIONS } from './data';
+import { useState, useEffect } from 'react';
+import { User, SupervisionData, InstrumentCategory } from './types';
+import { DUMMY_USERS, INITIAL_SUPERVISIONS, INSTRUMENT_ASPECTS } from './data';
 import Login from './components/Login';
 import AdminDashboard from './components/AdminDashboard';
 import TeacherDashboard from './components/TeacherDashboard';
@@ -18,10 +18,35 @@ export type ViewState =
   | { name: 'detail'; supervisionId: string };
 
 export default function App() {
-  const [users, setUsers] = useState<User[]>(DUMMY_USERS);
+  const [users, setUsers] = useState<User[]>(() => {
+    const saved = localStorage.getItem('supervisi_users');
+    return saved ? JSON.parse(saved) : DUMMY_USERS;
+  });
+  
+  const [instruments, setInstruments] = useState<InstrumentCategory[]>(() => {
+    const saved = localStorage.getItem('supervisi_instruments');
+    return saved ? JSON.parse(saved) : INSTRUMENT_ASPECTS;
+  });
+
+  const [supervisions, setSupervisions] = useState<SupervisionData[]>(() => {
+    const saved = localStorage.getItem('supervisi_data');
+    return saved ? JSON.parse(saved) : INITIAL_SUPERVISIONS;
+  });
+  
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [supervisions, setSupervisions] = useState<SupervisionData[]>(INITIAL_SUPERVISIONS);
   const [currentView, setCurrentView] = useState<ViewState>({ name: 'dashboard' });
+
+  useEffect(() => {
+    localStorage.setItem('supervisi_users', JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+    localStorage.setItem('supervisi_instruments', JSON.stringify(instruments));
+  }, [instruments]);
+
+  useEffect(() => {
+    localStorage.setItem('supervisi_data', JSON.stringify(supervisions));
+  }, [supervisions]);
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
@@ -69,16 +94,20 @@ export default function App() {
       </header>
 
       <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        {currentUser.role === 'admin' ? (
+        {currentUser.role === 'admin' || currentUser.role === 'kepala_sekolah' || currentUser.role === 'pengawas' ? (
           <>
             {currentView.name === 'dashboard' && (
               <AdminDashboard 
+                currentUser={currentUser}
                 supervisions={supervisions} 
                 users={users}
+                instruments={instruments}
                 onNewSupervision={(teacherId) => setCurrentView({ name: 'form', teacherId })}
+                onEditSupervision={(id) => setCurrentView({ name: 'form', supervisionId: id })}
                 onViewSupervision={(id) => setCurrentView({ name: 'detail', supervisionId: id })}
                 onAddUser={(user) => setUsers([...users, user])}
                 onDeleteUser={(id) => setUsers(users.filter(u => u.id !== id))}
+                onUpdateInstruments={setInstruments}
               />
             )}
             {currentView.name === 'form' && (
@@ -87,6 +116,7 @@ export default function App() {
                 supervisionId={currentView.supervisionId}
                 supervisions={supervisions}
                 users={users.filter(u => u.role === 'guru')}
+                instruments={instruments}
                 onSave={handleSaveSupervision}
                 onCancel={() => setCurrentView({ name: 'dashboard' })}
               />
@@ -95,6 +125,7 @@ export default function App() {
               <SupervisionDetail
                 supervision={supervisions.find(s => s.id === currentView.supervisionId)!}
                 teacher={users.find(u => u.id === supervisions.find(s => s.id === currentView.supervisionId)?.teacherId)!}
+                instruments={instruments}
                 onBack={() => setCurrentView({ name: 'dashboard' })}
               />
             )}
@@ -112,6 +143,7 @@ export default function App() {
               <SupervisionDetail
                 supervision={supervisions.find(s => s.id === currentView.supervisionId)!}
                 teacher={currentUser}
+                instruments={instruments}
                 onBack={() => setCurrentView({ name: 'dashboard' })}
               />
             )}

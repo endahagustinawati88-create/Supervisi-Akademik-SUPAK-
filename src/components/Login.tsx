@@ -86,7 +86,7 @@ export default function Login({ onLogin, users }: LoginProps) {
         </form>
 
         <div className="mt-6 border-t pt-6">
-          <h3 className="text-sm font-semibold text-slate-700 mb-2">Info Akun Dummy:</h3>
+          <h3 className="text-sm font-semibold text-slate-700 mb-2">Info Login Default:</h3>
           <ul className="text-xs text-slate-500 space-y-1">
             <li><span className="font-medium text-slate-700">Admin:</span> admin / 1</li>
             <li><span className="font-medium text-slate-700">Guru:</span> NIP / 123</li>

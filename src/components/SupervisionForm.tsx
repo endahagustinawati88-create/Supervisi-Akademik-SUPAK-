@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SupervisionData, User, AspectEvaluation } from '../types';
-import { INSTRUMENT_ASPECTS } from '../data';
+import { SupervisionData, User, AspectEvaluation, InstrumentCategory } from '../types';
 import { ArrowLeft, Save } from 'lucide-react';
 import { cn } from '../utils';
 
@@ -9,11 +8,12 @@ interface SupervisionFormProps {
   supervisionId?: string;
   supervisions: SupervisionData[];
   users: User[];
+  instruments: InstrumentCategory[];
   onSave: (data: SupervisionData) => void;
   onCancel: () => void;
 }
 
-export default function SupervisionForm({ teacherId, supervisionId, supervisions, users, onSave, onCancel }: SupervisionFormProps) {
+export default function SupervisionForm({ teacherId, supervisionId, supervisions, users, instruments, onSave, onCancel }: SupervisionFormProps) {
   const isEditing = !!supervisionId;
   const initialData = isEditing ? supervisions.find(s => s.id === supervisionId) : null;
 
@@ -37,7 +37,7 @@ export default function SupervisionForm({ teacherId, supervisionId, supervisions
     } else {
       // Initialize evaluations
       const initialEvals: Record<string, AspectEvaluation> = {};
-      INSTRUMENT_ASPECTS.forEach(category => {
+      instruments.forEach(category => {
         category.items.forEach(item => {
           if (item.subItems) {
             item.subItems.forEach(sub => {
@@ -198,7 +198,7 @@ export default function SupervisionForm({ teacherId, supervisionId, supervisions
         </div>
 
         {/* Assessment Items */}
-        {formData.evaluations && INSTRUMENT_ASPECTS.map((category, catIdx) => (
+        {formData.evaluations && instruments.map((category, catIdx) => (
           <div key={catIdx} className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="bg-slate-50 px-6 py-4 border-b border-slate-200">
               <h3 className="font-bold text-slate-800">{category.category}</h3>

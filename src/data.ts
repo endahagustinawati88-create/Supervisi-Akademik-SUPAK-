@@ -1,13 +1,13 @@
-import { SupervisionData, User } from './types';
+import { SupervisionData, User, InstrumentCategory } from './types';
 
 export const DUMMY_USERS: User[] = [
   { id: '1', name: 'Admin Supervisi', role: 'admin' },
-  { id: '2', name: 'Budi Santoso, S.Pd', nip: '123', role: 'guru' },
-  { id: '3', name: 'Siti Aminah, M.Pd', nip: '456', role: 'guru' },
+  { id: '2', name: 'Kepala Sekolah', nip: '12345678', role: 'kepala_sekolah' },
 ];
 
-export const INSTRUMENT_ASPECTS = [
+export const INSTRUMENT_ASPECTS: InstrumentCategory[] = [
   {
+    id: 'cat-1',
     category: 'Keselarasan',
     items: [
       { id: '1', text: 'Tujuan pembelajaran, langkah pembelajaran, dan asesmen pembelajaran sudah mengarah pada pencapaian Dimensi Profil Lulusan' },
@@ -15,6 +15,7 @@ export const INSTRUMENT_ASPECTS = [
     ],
   },
   {
+    id: 'cat-2',
     category: 'Kerangka Pembelajaran',
     items: [
       { id: '3', text: 'Praktik pedagogis yang dituliskan sudah tergambar pada langkah pembelajaran dan/atau asesmen pembelajaran' },
@@ -24,6 +25,7 @@ export const INSTRUMENT_ASPECTS = [
     ],
   },
   {
+    id: 'cat-3',
     category: 'Langkah Pembelajaran',
     items: [
       { id: '7', text: 'Langkah pembelajaran dapat memfasilitasi murid untuk merasakan pengalaman belajar MEMAHAMI (terlibat aktif mengonstruksi pengetahuan agar dapat memahami secara mendalam konsep atau materi dari berbagai sumber dan konteks).', subItems: [
@@ -53,6 +55,7 @@ export const INSTRUMENT_ASPECTS = [
     ],
   },
   {
+    id: 'cat-4',
     category: 'Asesmen',
     items: [
       { id: '13', text: 'Asesmen pada awal pembelajaran telah dilaksanakan untuk mendapatkan bukti kesiapan belajar secara emosional dan mental, pengetahuan awal, dan kebutuhan belajar murid' },
@@ -62,47 +65,4 @@ export const INSTRUMENT_ASPECTS = [
   },
 ];
 
-export const INITIAL_SUPERVISIONS: SupervisionData[] = [
-  {
-    id: 'sup-1',
-    teacherId: '2',
-    date: '2023-10-15',
-    jenjang: 'SMP',
-    mataPelajaran: 'Matematika',
-    kelas: 'VII A',
-    judul: 'Operasi Bilangan Bulat',
-    evaluations: {
-      '1': { score: 3, comment: 'Sudah baik' },
-      '2': { score: 4, comment: 'Sangat selaras' },
-      '3': { score: 3, comment: '' },
-      '4': { score: 3, comment: '' },
-      '5': { score: 2, comment: 'Perlu ditingkatkan kemitraannya' },
-      '6': { score: 4, comment: 'Pemanfaatan aplikasi Quizizz sangat menarik' },
-      '7a': { score: 3, comment: '' },
-      '7b': { score: 3, comment: '' },
-      '7c': { score: 4, comment: '' },
-      '7d': { score: 3, comment: '' },
-      '7e': { score: 3, comment: '' },
-      '7f': { score: 3, comment: '' },
-      '8a': { score: 3, comment: '' },
-      '8b': { score: 2, comment: 'Kurang kontekstual' },
-      '8c': { score: 3, comment: '' },
-      '8d': { score: 3, comment: '' },
-      '9a': { score: 3, comment: '' },
-      '9b': { score: 3, comment: '' },
-      '9c': { score: 3, comment: '' },
-      '9d': { score: 3, comment: '' },
-      '9e': { score: 3, comment: '' },
-      '10': { score: 4, comment: '' },
-      '11': { score: 3, comment: '' },
-      '12': { score: 3, comment: '' },
-      '13': { score: 3, comment: '' },
-      '14': { score: 3, comment: '' },
-      '15': { score: 4, comment: 'Asesmen komprehensif' },
-    },
-    kelebihan: 'Penggunaan media digital sangat interaktif',
-    kekurangan: 'Penerapan pada situasi nyata belum maksimal',
-    rekomendasi: 'Tambahkan studi kasus kehidupan sehari-hari',
-    status: 'completed',
-  },
-];
+export const INITIAL_SUPERVISIONS: SupervisionData[] = [];
