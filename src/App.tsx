@@ -125,6 +125,7 @@ export default function App() {
               <SupervisionDetail
                 supervision={supervisions.find(s => s.id === currentView.supervisionId)!}
                 teacher={users.find(u => u.id === supervisions.find(s => s.id === currentView.supervisionId)?.teacherId)!}
+                users={users}
                 instruments={instruments}
                 onBack={() => setCurrentView({ name: 'dashboard' })}
               />
@@ -143,6 +144,7 @@ export default function App() {
               <SupervisionDetail
                 supervision={supervisions.find(s => s.id === currentView.supervisionId)!}
                 teacher={currentUser}
+                users={users}
                 instruments={instruments}
                 onBack={() => setCurrentView({ name: 'dashboard' })}
               />

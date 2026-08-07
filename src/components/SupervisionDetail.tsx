@@ -6,11 +6,12 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 interface SupervisionDetailProps {
   supervision: SupervisionData;
   teacher: User;
+  users: User[];
   instruments: InstrumentCategory[];
   onBack: () => void;
 }
 
-export default function SupervisionDetail({ supervision, teacher, instruments, onBack }: SupervisionDetailProps) {
+export default function SupervisionDetail({ supervision, teacher, users, instruments, onBack }: SupervisionDetailProps) {
   
   const renderScore = (score: number | null) => {
     if (score === null) return <span className="text-slate-400">-</span>;
@@ -306,21 +307,29 @@ export default function SupervisionDetail({ supervision, teacher, instruments, o
 
         {/* Signatures */}
         <div className="hidden print:grid grid-cols-3 gap-8 mt-12 pt-8 text-center text-sm font-medium text-slate-800 break-inside-avoid">
-          <div>
-            <p className="mb-20">Kepala Sekolah,</p>
-            <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">______________________</p>
-            <p className="mt-1">NIP.</p>
-          </div>
-          <div>
-            <p className="mb-20">Guru yang diobservasi,</p>
-            <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">{teacher.name}</p>
-            <p className="mt-1">NIP. {teacher.nip}</p>
-          </div>
-          <div>
-            <p className="mb-20">Pengawas,</p>
-            <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">______________________</p>
-            <p className="mt-1">NIP.</p>
-          </div>
+          {(() => {
+            const kepalaSekolah = users.find(u => u.role === 'kepala_sekolah');
+            const pengawas = users.find(u => u.role === 'pengawas');
+            return (
+              <>
+                <div>
+                  <p className="mb-20">Kepala Sekolah,</p>
+                  <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">{kepalaSekolah ? kepalaSekolah.name : '______________________'}</p>
+                  <p className="mt-1">NIP. {kepalaSekolah?.nip || '______________________'}</p>
+                </div>
+                <div>
+                  <p className="mb-20">Guru yang diobservasi,</p>
+                  <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">{teacher.name}</p>
+                  <p className="mt-1">NIP. {teacher.nip || '______________________'}</p>
+                </div>
+                <div>
+                  <p className="mb-20">Pengawas,</p>
+                  <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">{pengawas ? pengawas.name : '______________________'}</p>
+                  <p className="mt-1">NIP. {pengawas?.nip || '______________________'}</p>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
     </div>
