@@ -27,6 +27,51 @@ export default function SupervisionDetail({ supervision, teacher, instruments, o
 
   const [showPrintWarning, setShowPrintWarning] = useState(false);
 
+  const { totalScore, maxScore, percentage, predicate } = useMemo(() => {
+    let tScore = 0;
+    let mScore = 0;
+    instruments.forEach(category => {
+      category.items.forEach(item => {
+        if (!item.subItems) {
+          const score = supervision.evaluations[item.id]?.score;
+          if (score !== null && score !== undefined) {
+            tScore += score;
+            mScore += 4;
+          }
+        } else {
+          item.subItems.forEach(sub => {
+            const score = supervision.evaluations[sub.id]?.score;
+            if (score !== null && score !== undefined) {
+              tScore += score;
+              mScore += 4;
+            }
+          });
+        }
+      });
+    });
+
+    const percent = mScore > 0 ? Math.round((tScore / mScore) * 100) : 0;
+    let pred = 'Kurang';
+    let grade = 'D';
+    if (percent >= 91) {
+      pred = 'Sangat Baik';
+      grade = 'A';
+    } else if (percent >= 81) {
+      pred = 'Baik';
+      grade = 'B';
+    } else if (percent >= 71) {
+      pred = 'Cukup';
+      grade = 'C';
+    }
+
+    return {
+      totalScore: tScore,
+      maxScore: mScore,
+      percentage: percent,
+      predicate: `${pred} (${grade})`
+    };
+  }, [supervision, instruments]);
+
   const radarData = useMemo(() => {
     return instruments.map(category => {
       let totalScore = 0;
@@ -153,18 +198,35 @@ export default function SupervisionDetail({ supervision, teacher, instruments, o
           </div>
         </div>
 
-        {/* Radar Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 print:shadow-none print:border-slate-300 print:break-inside-avoid">
-          <h3 className="font-bold text-slate-800 mb-4 text-center">Profil Penilaian Supervisi</h3>
-          <div className="h-[300px] w-full max-w-lg mx-auto">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 4]} />
-                <Radar name="Skor" dataKey="A" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} />
-              </RadarChart>
-            </ResponsiveContainer>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Summary Score */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-center print:shadow-none print:border-slate-300 print:break-inside-avoid">
+            <h3 className="text-slate-500 font-medium mb-2">Nilai Akhir Supervisi</h3>
+            <div className="text-5xl font-black text-indigo-600 mb-2">{percentage}%</div>
+            <div className={`px-4 py-1 rounded-full text-sm font-bold ${
+              percentage >= 91 ? 'bg-green-100 text-green-700 print:border print:border-green-300' :
+              percentage >= 81 ? 'bg-blue-100 text-blue-700 print:border print:border-blue-300' :
+              percentage >= 71 ? 'bg-amber-100 text-amber-700 print:border print:border-amber-300' :
+              'bg-red-100 text-red-700 print:border print:border-red-300'
+            }`}>
+              {predicate}
+            </div>
+            <div className="text-sm text-slate-400 mt-3">Total Skor: {totalScore} dari maksimal {maxScore}</div>
+          </div>
+
+          {/* Radar Chart */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 print:shadow-none print:border-slate-300 print:break-inside-avoid">
+            <h3 className="font-bold text-slate-800 mb-4 text-center">Profil Penilaian Supervisi</h3>
+            <div className="h-[250px] w-full max-w-sm mx-auto">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 4]} />
+                  <Radar name="Skor" dataKey="A" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
@@ -239,6 +301,25 @@ export default function SupervisionDetail({ supervision, teacher, instruments, o
           <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
             <h4 className="font-semibold text-indigo-800 mb-2 text-sm uppercase tracking-wider">Rekomendasi Tindak Lanjut</h4>
             <p className="text-slate-700 text-sm leading-relaxed">{supervision.rekomendasi}</p>
+          </div>
+        </div>
+
+        {/* Signatures */}
+        <div className="hidden print:grid grid-cols-3 gap-8 mt-12 pt-8 text-center text-sm font-medium text-slate-800 break-inside-avoid">
+          <div>
+            <p className="mb-20">Kepala Sekolah,</p>
+            <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">______________________</p>
+            <p className="mt-1">NIP.</p>
+          </div>
+          <div>
+            <p className="mb-20">Guru yang diobservasi,</p>
+            <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">{teacher.name}</p>
+            <p className="mt-1">NIP. {teacher.nip}</p>
+          </div>
+          <div>
+            <p className="mb-20">Pengawas,</p>
+            <p className="border-b border-slate-400 inline-block min-w-[150px] pb-1">______________________</p>
+            <p className="mt-1">NIP.</p>
           </div>
         </div>
       </div>
