@@ -106,6 +106,7 @@ export default function App() {
                 onEditSupervision={(id) => setCurrentView({ name: 'form', supervisionId: id })}
                 onViewSupervision={(id) => setCurrentView({ name: 'detail', supervisionId: id })}
                 onAddUser={(user) => setUsers([...users, user])}
+                onEditUser={(updatedUser) => setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u))}
                 onDeleteUser={(id) => setUsers(users.filter(u => u.id !== id))}
                 onUpdateInstruments={setInstruments}
               />

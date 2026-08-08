@@ -5,6 +5,8 @@ export interface User {
   name: string;
   nip?: string;
   role: Role;
+  username?: string;
+  password?: string;
 }
 
 export interface AspectEvaluation {

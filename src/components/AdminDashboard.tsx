@@ -15,14 +15,17 @@ interface AdminDashboardProps {
   onEditSupervision: (supervisionId: string) => void;
   onViewSupervision: (supervisionId: string) => void;
   onAddUser: (user: User) => void;
+  onEditUser: (user: User) => void;
   onDeleteUser: (id: string) => void;
   onUpdateInstruments: (instruments: InstrumentCategory[]) => void;
 }
 
-export default function AdminDashboard({ currentUser, supervisions, users, instruments, onNewSupervision, onEditSupervision, onViewSupervision, onAddUser, onDeleteUser, onUpdateInstruments }: AdminDashboardProps) {
+export default function AdminDashboard({ currentUser, supervisions, users, instruments, onNewSupervision, onEditSupervision, onViewSupervision, onAddUser, onEditUser, onDeleteUser, onUpdateInstruments }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<'supervisi' | 'pengguna' | 'instrumen'>('supervisi');
   const guruUsers = useMemo(() => users.filter(u => u.role === 'guru'), [users]);
   const isAdmin = currentUser.role === 'admin';
+  const isKepalaSekolah = currentUser.role === 'kepala_sekolah';
+  const canManageUsers = isAdmin || isKepalaSekolah;
 
   const stats = useMemo(() => {
     const totalTeachers = guruUsers.length;
@@ -71,27 +74,27 @@ export default function AdminDashboard({ currentUser, supervisions, users, instr
           >
             Supervisi
           </button>
+          {canManageUsers && (
+            <button
+              onClick={() => setActiveTab('pengguna')}
+              className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'pengguna' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
+            >
+              Pengguna
+            </button>
+          )}
           {isAdmin && (
-            <>
-              <button
-                onClick={() => setActiveTab('pengguna')}
-                className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'pengguna' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
-              >
-                Pengguna
-              </button>
-              <button
-                onClick={() => setActiveTab('instrumen')}
-                className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'instrumen' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
-              >
-                Instrumen
-              </button>
-            </>
+            <button
+              onClick={() => setActiveTab('instrumen')}
+              className={cn("px-4 py-2 rounded-md text-sm font-medium transition-colors", activeTab === 'instrumen' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-600 hover:text-slate-800")}
+            >
+              Instrumen
+            </button>
           )}
         </div>
       </div>
 
-      {isAdmin && activeTab === 'pengguna' && (
-        <UserManagement users={users} onAddUser={onAddUser} onDeleteUser={onDeleteUser} />
+      {canManageUsers && activeTab === 'pengguna' && (
+        <UserManagement users={users} onAddUser={onAddUser} onEditUser={onEditUser} onDeleteUser={onDeleteUser} currentUser={currentUser} />
       )}
 
       {isAdmin && activeTab === 'instrumen' && (

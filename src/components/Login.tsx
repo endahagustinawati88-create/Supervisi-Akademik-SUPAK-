@@ -15,21 +15,20 @@ export default function Login({ onLogin, users }: LoginProps) {
     e.preventDefault();
     setError('');
 
-    if (username === 'admin' && password === '1') {
-      const adminUser = users.find(u => u.role === 'admin');
-      if (adminUser) onLogin(adminUser);
-      return;
-    }
+    const user = users.find(u => {
+      const matchUsername = u.username === username || (!u.username && u.nip === username) || (u.role === 'admin' && username === 'admin');
+      const matchPassword = u.password ? u.password === password : (
+        u.role === 'admin' ? password === '1' :
+        u.role === 'kepala_sekolah' ? password === '12345' :
+        password === '123'
+      );
+      
+      return matchUsername && matchPassword;
+    });
 
-    const nonAdminUser = users.find(u => u.nip === username && u.role !== 'admin');
-    if (nonAdminUser) {
-      if (nonAdminUser.role === 'kepala_sekolah' && password === '12345') {
-        onLogin(nonAdminUser);
-        return;
-      } else if (nonAdminUser.role !== 'kepala_sekolah' && password === '123') {
-        onLogin(nonAdminUser);
-        return;
-      }
+    if (user) {
+      onLogin(user);
+      return;
     }
 
     setError('Username atau password salah.');

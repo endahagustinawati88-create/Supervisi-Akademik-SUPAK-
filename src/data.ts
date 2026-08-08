@@ -1,8 +1,8 @@
 import { SupervisionData, User, InstrumentCategory } from './types';
 
 export const DUMMY_USERS: User[] = [
-  { id: '1', name: 'Admin Supervisi', role: 'admin' },
-  { id: '2', name: 'Kepala Sekolah', nip: '12345678', role: 'kepala_sekolah' },
+  { id: '1', name: 'Admin Supervisi', role: 'admin', username: 'admin', password: '1' },
+  { id: '2', name: 'Kepala Sekolah', nip: '12345678', role: 'kepala_sekolah', username: '12345678', password: '12345' },
 ];
 
 export const INSTRUMENT_ASPECTS: InstrumentCategory[] = [
